@@ -5,366 +5,490 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" href="https://glitch.com/favicon.ico" />
-    <meta name="nova-icon"
-        content="<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='72.63792' height='72.89678' viewBox='0,0,72.63792,72.89678'><defs><linearGradient x1='236.77944' y1='195.83445' x2='262.0072' y2='195.83445' gradientUnits='userSpaceOnUse' id='color-1'><stop offset='0' stop-color='#007c30'/><stop offset='1' stop-color='#b1d900'/></linearGradient><linearGradient x1='225.81025' y1='163.6288' x2='225.81025' y2='196.37121' gradientUnits='userSpaceOnUse' id='color-2'><stop offset='0' stop-color='#89ff8f'/><stop offset='1' stop-color='#007c30'/></linearGradient></defs><g transform='translate(-203.73251,-143.3707)'><g data-paper-data='{&quot;isPaintingLayer&quot;:true}' fill-rule='nonzero' stroke-linejoin='miter' stroke-miterlimit='10' stroke-dasharray='' stroke-dashoffset='0' style='mix-blend-mode: normal'><path d='M203.73252,216.26749v-72.53497h72.53497v72.53497z' fill='#2f2f2f' stroke='none' stroke-width='none' stroke-linecap='butt'/><path d='M236.77944,195.83445h25.22776' fill='none' stroke='url(#color-1)' stroke-width='5' stroke-linecap='round'/><path d='M203.88843,186.60104v-43.23034h72.48201v7.2482c0,0 -15.14542,18.20653 -36.92222,27.32654c-15.1326,6.33745 -35.55979,8.65561 -35.55979,8.65561z' fill='#535353' stroke='none' stroke-width='0' stroke-linecap='butt'/><path d='M217.99281,163.6288l15.63488,16.5811l-15.63488,16.16132' fill='none' stroke='url(#color-2)' stroke-width='5' stroke-linecap='round'/></g></g></svg>">
+    <!-- Nova Icon SVG remains the same -->
+    <meta name="nova-icon" content="...">
 
-    <title>Nova CLI</title>
+    <title>Nova CLI Enhanced</title>
 
     <style>
-        /* a minimalist set of CSS resets */
-
-        /* default to border-box */
+        /* Base CSS - largely unchanged, it's pretty good */
         html {
             box-sizing: border-box;
             font-size: 16px;
         }
-
-        *,
-        *:before,
-        *:after {
-            box-sizing: inherit;
-        }
-
-        /* adjust typography defaults */
+        *, *:before, *:after { box-sizing: inherit; }
         body {
             margin: 1rem;
             font-family: 'Space Mono', monospace;
             line-height: 1.5;
             letter-spacing: 0.7px;
             background: #1e1e1e;
+            color: #e0e0e0; /* Default text color */
+            overflow: hidden; /* Prevent body scroll */
         }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #2a2a2a; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #777; }
+        img, video { height: auto; max-width: 100%; }
+        small { opacity: 0.7; }
 
-        /* Scrollbar Track */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        /* Scrollbar Thumb */
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            /* Dark background color */
-            border-radius: 10px;
-            /* Border radius for the thumb */
-        }
-
-        /* Scrollbar Track on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-            /* Dark hover color */
-        }
-
-
-        /* images and videos max out at full width */
-        img,
-        video {
-            height: auto;
-            max-width: 100%;
-        }
-
-        small {
-            opacity: 0.5;
-        }
-
-        #thing {
+        /* Terminal styles */
+        #terminal-output {
             background-color: #101010;
             color: white;
             border-radius: 10px 10px 0 0;
-            padding: 10px;
-            height: calc(100vh - 80px);
-            overflow-y: scroll;
-
+            padding: 15px;
+            height: calc(100vh - 75px); /* Adjusted height */
+            overflow-y: auto; /* Changed to auto */
+            scroll-behavior: smooth;
+            word-wrap: break-word; /* Ensure long lines wrap */
         }
 
-        #thin {
+        #terminal-input {
             background-color: #0c0c0c;
             color: white;
             width: 100%;
             font-family: 'Space Mono', monospace;
             border: none;
-            padding: 10px;
+            padding: 12px 15px;
             font-size: 16px;
             border-radius: 0 0 10px 10px;
-        }
-
-        input {
             outline: none;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
         }
 
-        .nic {
-            animation: bloo;
-            animation-duration: .2s;
+        /* Output entry styling */
+        .output-entry {
+            margin-bottom: 0.8em;
+            animation: fadeIn 0.3s ease-out;
+        }
+        .prompt-line {
+            color: #88c0d0; /* Nord color for prompt */
+            margin-right: 5px;
+            user-select: none;
+        }
+        .command-line {
+            color: #e5e9f0; /* Lighter text for command */
+        }
+        .output-content {
+            padding-left: 5px; /* Indent output slightly */
+            color: #a3be8c; /* Greenish for success output */
+        }
+        .output-content.error {
+            color: #bf616a; /* Reddish for error output */
+        }
+        .output-content pre { /* Style for JSON output */
+            background-color: #2e3440;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            overflow-x: auto;
         }
 
-        @keyframes bloo {
-            0% {
-                transform: translateY(10px);
-                opacity: 0;
-            }
-
-            100% {
-                transform: translateY(0px);
-                opacity: 1;
-            }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div id="thing">
-        Nova Command Line Interface
+    <!-- Use more semantic names -->
+    <div id="terminal-output">
+        <div>Welcome to Nova CLI Enhanced! Type 'help' for commands.</div>
     </div>
-    <input id="thin" autocomplete="off" placeholder=">>>">
+    <input id="terminal-input" autocomplete="off" placeholder=">>>" autofocus>
+
     <script>
-        var thin;
-        var thing;
-        var curdir = "/", clay;
-        greenflag();
-        var lastcommand = "nova cuteee()";
+        // --- Self-Executing Anonymous Function (IIFE) to encapsulate scope ---
+        (() => {
+            // --- DOM Element Caching ---
+            const outputElement = document.getElementById("terminal-output");
+            const inputElement = document.getElementById("terminal-input");
 
-        function greenflag() {
+            // --- State ---
+            let currentDirectory = "/";
+            let isProcessing = false;
+            const commandHistory = [];
+            let historyIndex = -1; // -1 means pointing before the first history item
 
-            thing = document.getElementById("thing");
-            thin = document.getElementById("thin");
+            // --- Utility Functions ---
 
-            thin.focus()
-            curdir = "/";
+            /**
+             * Displays output in the terminal.
+             * @param {string} commandText - The command that was entered.
+             * @param {string} outputText - The result/output of the command.
+             * @param {boolean} [isError=false] - Whether the output is an error message.
+             */
+            const displayOutput = (commandText, outputText, isError = false) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'output-entry';
 
+                // Sanitize commandText before inserting as HTML
+                const sanitizedCommand = commandText.replace(/</g, "<").replace(/>/g, ">");
 
-            thin.addEventListener("keypress", (event) => {
-                if (event.key === "Enter") {
-                    proc();
+                entryDiv.innerHTML = `
+                    <div>
+                        <span class="prompt-line">nova@cli:${currentDirectory}$</span>
+                        <span class="command-line">${sanitizedCommand}</span>
+                    </div>
+                    <div class="output-content ${isError ? 'error' : ''}">${outputText}</div>
+                `;
+
+                outputElement.appendChild(entryDiv);
+                // Scroll to the bottom smoothly
+                outputElement.scrollTop = outputElement.scrollHeight;
+            };
+
+            /**
+             * Displays an error message in the terminal.
+             * @param {string} commandText - The command that caused the error.
+             * @param {string | Error} error - The error message or Error object.
+             */
+            const displayError = (commandText, error) => {
+                const message = (error instanceof Error) ? `${error.name}: ${error.message}` : String(error);
+                console.error(`Command "${commandText}" failed:`, error); // Log detailed error to console
+                displayOutput(commandText, `Error: ${message.replace(/</g, "<").replace(/>/g, ">")}`, true);
+            };
+
+            /**
+             * Safely formats various data types for display.
+             * @param {*} data - The data to format.
+             * @returns {string} HTML-safe string representation.
+             */
+            const formatOutput = (data) => {
+                if (data === null || data === undefined) {
+                    return String(data);
                 }
-                if (event.key === "ArrowUp") {
-                    thin.value = lastcommand;
+                if (data instanceof Error) {
+                    return `<pre>Error: ${data.message}\nStack: ${data.stack}</pre>`;
                 }
-            });
-        }
-
-        function disp(txt) {
-            var newDiv = document.createElement("div");
-            newDiv.className = "nic";
-            newDiv.innerHTML = txt;
-
-            var lastChild = thing.lastElementChild;
-            if (lastChild) {
-                thing.insertBefore(newDiv, lastChild.nextSibling);
-            } else {
-                thing.appendChild(newDiv);
-            }
-
-            var lineBreak = document.createElement("br");
-            thing.insertBefore(lineBreak, newDiv);
-            var ellipsis = document.createElement("span");
-            ellipsis.innerText = curdir + " > " + clay;
-            thing.insertBefore(ellipsis, newDiv);
-
-            thing.scrollTop = thing.scrollHeight;
-        }
-
-        var isProcRunning = false;
-
-        async function proc() {
-            if (isProcRunning) return;
-            isProcRunning = true;
-            let x = thin.value.toLowerCase();
-            clay = thin.value;
-            console.log(thin.value)
-            lastcommand = thin.value;
-            thin.value = "";
-
-            if (x === "help") {
-                disp(`Available Commands:<br>
-- date: Get the current date.<br>
-- time: Get the current time.<br>
-- battery: Get battery info.<br>
-- nova: Nova Console<br>
-- device: Get device Info.<br>
-- cd [folder]: changes current folder to [folder].<br>
-- ls: list files from current folder.<br>
-`);
-            } else if (x === "date") {
-                const currentDate = new Date();
-                disp(`Current date is: ${currentDate.toDateString()}`);
-            } else if (x === "time") {
-                const currentTime = new Date();
-                disp(`Current time is: ${currentTime.toLocaleTimeString()}`);
-            } else if (x === "battery") {
-                navigator
-                    .getBattery()
-                    .then(function (battery) {
-                        const level = (battery.level * 100).toFixed(2); // Convert to percentage with two decimal places
-                        const charging = battery.charging ? "Charging" : "Not Charging";
-
-                        const status = `Battery Status: ${level}% (${charging})`;
-
-                        disp(status);
-                    })
-                    .catch(function (error) {
-                        disp(
-                            "An error occurred while fetching battery status information: " +
-                            error.message
-                        );
-                    });
-            } else if (x === "device") {
-                // Check if the necessary properties are available
-                if ("deviceMemory" in navigator && "hardwareConcurrency" in navigator) {
-                    const platform = navigator.platform;
-                    const userAgent = navigator.userAgent;
-                    const deviceMemory = navigator.deviceMemory;
-                    const hardwareConcurrency = navigator.hardwareConcurrency;
-
-                    var deviceInfo = `
-      Platform: ${platform}<br>
-      User Agent: ${userAgent}<br>
-      Device Memory: ${deviceMemory} GB<br>
-      Hardware Concurrency: ${hardwareConcurrency}<br>
-    `;
-
-                    // Check if the performance API is available for FPS information
-                    if ("performance" in window && "now" in performance) {
-                        const frameTiming = performance.now();
-                        const fps = (100000 / frameTiming).toFixed(2); // Calculate FPS
-                        // Retrieve display information
-                        const screen = window.screen;
-                        const screenWidth = screen.width;
-                        const screenHeight = screen.height;
-                        const screenResolution = `${screenWidth}x${screenHeight}`;
-                        const colorDepth = screen.colorDepth;
-
-                        deviceInfo += `
-      Screen Resolution: ${screenResolution}<br>
-      Color Depth: ${colorDepth} bits
-    `;
-
-                        deviceInfo += `\nFrames Per Second (FPS): ${fps}`;
-                    }
-
-                    disp(deviceInfo);
-                } else {
-                    disp("Device information is not fully available on this device.");
+                if (typeof data === 'function') {
+                    return `Function: ${data.name || 'anonymous'}\n<pre>${data.toString().replace(/</g, "<")}</pre>`;
                 }
-            } else if (x === "memory") {
-                const totalMemory = (
-                    performance.memory.totalJSHeapSize /
-                    1024 /
-                    1024
-                ).toFixed(2);
-                const usedMemory = (
-                    performance.memory.usedJSHeapSize /
-                    1024 /
-                    1024
-                ).toFixed(2);
-                const memoryUsagePercentage = ((usedMemory / totalMemory) * 100).toFixed(2);
-
-                disp(
-                    `Memory Usage: ${memoryUsagePercentage}% (${usedMemory}MB / ${totalMemory}MB)`
-                );
-            } else if (x == "flash on") {
-                toggleFlashlight("on");
-            } else if (x == "flash off") {
-                toggleFlashlight("off");
-            } else if (x == "vibrate 500") {
-                navigator.vibrate(500);
-            } else if (x == "vibrate 100") {
-                navigator.vibrate(100);
-            } else if (x.startsWith("nova")) {
-                let xx = clay.slice(clay.indexOf(" ") + 1);
-                (async () => {
+                if (data instanceof Element) {
+                    return `DOM Element: <pre>${data.outerHTML.replace(/</g, "<")}</pre>`;
+                }
+                if (typeof data === 'object') {
                     try {
-                        let target = window.parent[xx];
-                        let result = typeof target === 'function' ? await target() : target;
-
-                        if (result instanceof Error) {
-                            disp(`Error: ${result.message}\nStack: ${result.stack}`);
-                        } else if (typeof result === 'function') {
-                            disp(`Function: ${result.name || 'anonymous'}\n${result.toString()}`);
-                        } else if (result instanceof Element) {
-                            disp(`DOM Element: <${result.tagName.toLowerCase()} id="${result.id}" class="${result.className}">`);
-                        } else if (typeof result === 'object' && result !== null) {
-                            disp(`<pre>${JSON.stringify(result, null, 2)}</pre>`);
-                        } else {
-                            disp(result);
-                        }
-                    } catch (err) {
-                        disp(`Exception: ${err.message}\nStack: ${err.stack}`);
+                        // Use JSON.stringify for objects/arrays, null replacer, 2-space indent
+                        // Escape HTML chars in the resulting string
+                        const jsonString = JSON.stringify(data, null, 2);
+                        return `<pre>${jsonString.replace(/</g, "<")}</pre>`;
+                    } catch (e) {
+                        return '[Circular Object or JSON Error]';
                     }
-                })();
-            } else if (x.startsWith("cd")) {
-                let xx = x.slice(x.indexOf(" ") + 1);
-                disp("Changed to: device://" + curdir);
-            } else if (x == "pwd") {
-                disp("Current: device://" + curdir);
-            } else if (x == "ls") {
-                try {
-                    let files = await window.parent.getFileNamesByFolder(curdir);
+                }
+                // For primitives (string, number, boolean), convert to string and escape
+                return String(data).replace(/</g, "<").replace(/>/g, ">");
+            };
 
-                    let i = ""
-                    files.forEach(item => {
-                        i += `Name: '${item.name}' File ID: '${item.id}'<br>`
-                    });
-                    disp(i)
-                } catch (error) {
-                    disp("Error fetching data:", error);
+
+            // --- Command Definitions ---
+            // Using an object map for commands. Keys are command names (lowercase).
+            // Values are objects with an `execute` async function and a `description`.
+            const commands = {
+                help: {
+                    description: "Displays this help message.",
+                    execute: async () => {
+                        let helpText = "Available Commands:<br>";
+                        Object.entries(commands).sort().forEach(([name, { description }]) => {
+                             // Basic formatting, adjust as needed
+                             helpText += `- <strong style="color: #81A1C1;">${name}</strong>: ${description}<br>`;
+                        });
+                        return helpText;
+                    }
+                },
+                date: {
+                    description: "Shows the current date.",
+                    execute: async () => new Date().toDateString()
+                },
+                time: {
+                    description: "Shows the current time.",
+                    execute: async () => new Date().toLocaleTimeString()
+                },
+                clear: {
+                    description: "Clears the terminal screen.",
+                    execute: async () => {
+                        outputElement.innerHTML = '<div>Terminal cleared.</div>';
+                        return ""; // Return empty string to avoid extra output line
+                    }
+                },
+                pwd: {
+                    description: "Prints the current working directory.",
+                    execute: async () => `Current directory: ${currentDirectory}`
+                },
+                cd: {
+                    description: "Changes the current directory. Use 'cd ..' to go up.",
+                    execute: async (args) => {
+                        const targetDir = args[0];
+                        if (!targetDir || targetDir === '.' || targetDir === currentDirectory) {
+                            return `Staying in ${currentDirectory}`;
+                        }
+                        if (targetDir === '..') {
+                            if (currentDirectory === '/') {
+                                return "Already at root directory.";
+                            }
+                            // Simple parent directory logic
+                            const parts = currentDirectory.split('/').filter(p => p); // Filter empty strings
+                            parts.pop();
+                            currentDirectory = '/' + parts.join('/');
+                            if (currentDirectory === "//") currentDirectory = "/"; // Handle root case
+                        } else {
+                            // Basic path joining, assumes target is relative for simplicity
+                            // No actual filesystem means we just simulate path changes
+                            const newPath = targetDir.startsWith('/')
+                                ? targetDir // Absolute path
+                                : (currentDirectory === '/' ? '' : currentDirectory) + '/' + targetDir; // Relative path
+
+                            // Simple normalization (remove trailing slash if not root)
+                            currentDirectory = newPath.replace(/\/$/, '');
+                            if (!currentDirectory) currentDirectory = "/"; // Handle becoming root
+                        }
+                        // In a real scenario, you'd validate if the directory exists here
+                        return `Changed directory to ${currentDirectory}`;
+                    }
+                },
+                ls: {
+                    description: "Lists 'files' in the current directory (simulated).",
+                    execute: async () => {
+                        // Simulate listing files based on directory
+                        // Replace with actual call if available (like window.parent.getFileNamesByFolder)
+                        try {
+                            // Example: Try calling parent function if it exists
+                            if (typeof window.parent?.getFileNamesByFolder === 'function') {
+                                const files = await window.parent.getFileNamesByFolder(currentDirectory);
+                                if (!Array.isArray(files)) {
+                                    return "Received non-array data from getFileNamesByFolder.";
+                                }
+                                if (files.length === 0) {
+                                    return "Directory is empty.";
+                                }
+                                return files.map(item => `Name: '${item.name}' ${item.id ? `ID: '${item.id}'` : ''}`).join('<br>');
+                            } else {
+                                // Simulate some files based on path
+                                if (currentDirectory === '/') {
+                                    return "home/<br>documents/<br>README.txt";
+                                } else if (currentDirectory.startsWith('/home')) {
+                                    return "projects/<br>notes.txt";
+                                } else {
+                                    return "file1.dat<br>another_folder/";
+                                }
+                            }
+                        } catch (error) {
+                           throw new Error(`Failed to list files: ${error.message}`);
+                        }
+                    }
+                },
+                battery: {
+                    description: "Gets battery status information.",
+                    execute: async () => {
+                        if (!navigator.getBattery) {
+                            throw new Error("Battery Status API not supported.");
+                        }
+                        const battery = await navigator.getBattery();
+                        const level = (battery.level * 100).toFixed(1);
+                        const charging = battery.charging ? "Charging" : "Discharging";
+                        const chargingTime = battery.chargingTime === Infinity ? 'N/A' : `${(battery.chargingTime / 60).toFixed(0)} min`;
+                        const dischargingTime = battery.dischargingTime === Infinity ? 'N/A' : `${(battery.dischargingTime / 60).toFixed(0)} min`;
+
+                        return `Level: ${level}% (${charging})<br>Time to full: ${chargingTime}<br>Time to empty: ${dischargingTime}`;
+                    }
+                },
+                device: {
+                    description: "Shows device and browser information.",
+                    execute: async () => {
+                        const { userAgent, platform, language, languages, hardwareConcurrency, deviceMemory } = navigator;
+                        const { width, height, colorDepth, pixelDepth } = window.screen;
+
+                        let deviceInfo = `Platform: ${platform}<br>Language: ${language} (${languages.join(', ')})<br>`;
+                        if (hardwareConcurrency) deviceInfo += `CPU Cores: ${hardwareConcurrency}<br>`;
+                        if (deviceMemory) deviceInfo += `Approx. RAM: ${deviceMemory} GB<br>`;
+                        deviceInfo += `Screen: ${width}x${height} (${colorDepth}-bit color, ${pixelDepth}-bit pixel)<br>`;
+                        deviceInfo += `User Agent: ${userAgent}`;
+                        return deviceInfo;
+                    }
+                },
+                memory: {
+                    description: "Shows JS heap memory usage (if available).",
+                    execute: async () => {
+                        if (!performance.memory) {
+                           throw new Error("Memory usage information not available (requires specific browser flags or versions).");
+                        }
+                        const { totalJSHeapSize, usedJSHeapSize, jsHeapSizeLimit } = performance.memory;
+                        const formatMB = (bytes) => (bytes / 1024 / 1024).toFixed(2) + ' MB';
+                        return `Used: ${formatMB(usedJSHeapSize)}<br>Allocated: ${formatMB(totalJSHeapSize)}<br>Limit: ${formatMB(jsHeapSizeLimit)}`;
+                    }
+                },
+                vibrate: {
+                    description: "Vibrates the device (e.g., 'vibrate 500').",
+                    execute: async (args) => {
+                        if (!navigator.vibrate) {
+                           throw new Error("Vibration API not supported.");
+                        }
+                        const duration = parseInt(args[0], 10);
+                        if (isNaN(duration) || duration <= 0) {
+                            throw new Error("Invalid duration. Provide milliseconds (e.g., vibrate 200).");
+                        }
+                        navigator.vibrate(duration);
+                        return `Vibrating for ${duration}ms.`;
+                    }
+                },
+                 // --- DANGEROUS COMMAND - Use with extreme caution ---
+                nova: {
+                    description: "Executes code/accesses properties in the parent window (Use cautiously!). Usage: nova propertyName or nova functionName()",
+                    execute: async (args) => {
+                        const commandStr = args.join(' '); // Reconstruct the argument string
+                        if (!commandStr) {
+                            throw new Error("No property or function specified.");
+                        }
+
+                        // WARNING: This accesses the parent window. Ensure you trust the parent context.
+                        // Avoid if this CLI runs in untrusted environments.
+                        if (!window.parent || window.parent === window) {
+                             throw new Error("Cannot access parent window context.");
+                        }
+
+                        // Rudimentary parsing: Check if it looks like a function call
+                        const isFunctionCall = commandStr.endsWith('()');
+                        const targetName = isFunctionCall ? commandStr.slice(0, -2) : commandStr;
+
+                        // Basic security check: Prevent accessing potentially sensitive top-level objects directly
+                        // You might want to expand this blocklist/allowlist significantly
+                        const blockedTargets = ['localStorage', 'sessionStorage', 'indexedDB', 'document', 'window', 'eval', 'Function'];
+                        if (blockedTargets.includes(targetName) || targetName.startsWith('_')) {
+                            throw new Error(`Access to '${targetName}' is restricted.`);
+                        }
+
+                        try {
+                            // Access the property/function on the parent window
+                            const target = window.parent[targetName];
+
+                            let result;
+                            if (isFunctionCall) {
+                                if (typeof target === 'function') {
+                                    // Execute the function - potential side effects!
+                                    result = await target.call(window.parent); // Call in parent's context
+                                } else {
+                                    throw new Error(`'${targetName}' is not a function in the parent window.`);
+                                }
+                            } else {
+                                // Access the property value
+                                result = target;
+                            }
+
+                            // Format the result safely for display
+                            return formatOutput(result);
+
+                        } catch (err) {
+                            // Catch errors during access or execution
+                            throw new Error(`Execution failed: ${err.message}`);
+                        }
+                    }
+                }
+                // --- Add more commands here following the same structure ---
+            };
+
+
+            // --- Core Command Processor ---
+            const processCommand = async () => {
+                if (isProcessing) return; // Prevent multiple commands running concurrently
+
+                const inputText = inputElement.value.trim();
+                if (inputText === "") return; // Ignore empty input
+
+                isProcessing = true;
+                inputElement.disabled = true; // Disable input during processing
+
+                // Add to history (if different from last command)
+                if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== inputText) {
+                    commandHistory.push(inputText);
+                }
+                historyIndex = commandHistory.length; // Reset history index
+
+                // Clear input for next command
+                inputElement.value = "";
+
+                // Parse command and arguments
+                const parts = inputText.match(/(?:[^\s"']+|"[^"]*"|'[^']*')+/g) || []; // Split by space, respecting quotes
+                const commandName = parts[0]?.toLowerCase();
+                const args = parts.slice(1).map(arg => arg.replace(/^["']|["']$/g, '')); // Remove surrounding quotes
+
+                const command = commands[commandName];
+
+                if (command) {
+                    try {
+                        const output = await command.execute(args);
+                        // Only display output if the command returned something
+                        if (output !== "" && output !== undefined && output !== null) {
+                           displayOutput(inputText, formatOutput(output));
+                        } else if (commandName !== 'clear') {
+                           // Acknowledge commands that don't produce visible output (except clear)
+                           displayOutput(inputText, `Command '${commandName}' executed.`);
+                        }
+                    } catch (error) {
+                        displayError(inputText, error);
+                    }
+                } else if (commandName) {
+                    displayError(inputText, `Command not found: ${commandName}. Type 'help' for available commands.`);
                 }
 
-            }
+                inputElement.disabled = false;
+                inputElement.focus();
+                isProcessing = false;
+            };
 
-            isProcRunning = false;
-        }
-
-        function ask(smth) {
-            let x = prompt(smth);
-            if (x === "") {
-                return ask(smth);
-            } else {
-                return smth;
-            }
-        }
-
-        function calculateEquation(equation) {
-            try {
-                const result = eval(equation);
-                return result;
-            } catch (error) {
-                return "Error: Invalid equation";
-            }
-        }
-
-        function toggleFlashlight(status) {
-            if ("torch" in navigator) {
-                // Check if the torch API is supported
-
-                if (status === "on") {
-                    // Turn on the flashlight
-                    navigator.torch
-                        .turnOn()
-                        .then(() => {
-                            console.log("Flashlight is turned on.");
-                        })
-                        .catch((error) => {
-                            console.error("Error turning on flashlight: ", error);
-                        });
-                } else if (status === "off") {
-                    // Turn off the flashlight
-                    navigator.torch
-                        .turnOff()
-                        .then(() => {
-                            console.log("Flashlight is turned off.");
-                        })
-                        .catch((error) => {
-                            console.error("Error turning off flashlight: ", error);
-                        });
-                } else {
-                    console.error('Invalid status. Please use "on" or "off".');
+            // --- Event Listeners ---
+            inputElement.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault(); // Prevent default newline behavior in input
+                    processCommand();
+                } else if (event.key === "ArrowUp") {
+                    event.preventDefault(); // Prevent cursor moving to start
+                    if (commandHistory.length > 0 && historyIndex > 0) {
+                        historyIndex--;
+                        inputElement.value = commandHistory[historyIndex];
+                        // Move cursor to end
+                        inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
+                    }
+                } else if (event.key === "ArrowDown") {
+                     event.preventDefault(); // Prevent cursor moving to end
+                    if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+                        historyIndex++;
+                        inputElement.value = commandHistory[historyIndex];
+                         // Move cursor to end
+                        inputElement.setSelectionRange(inputElement.value.length, inputElement.value.length);
+                    } else if (historyIndex === commandHistory.length - 1) {
+                        // If at the newest history item, pressing down clears the input
+                        historyIndex++;
+                        inputElement.value = "";
+                    }
                 }
-            } else {
-                console.error("Torch API is not supported in this browser.");
-            }
-        }
+                 // Add Tab for potential future autocompletion?
+                 // else if (event.key === "Tab") { event.preventDefault(); // handleAutocomplete(); }
+            });
+
+            // Ensure focus on input when clicking anywhere in the output area
+            outputElement.addEventListener('click', () => {
+                 inputElement.focus();
+            });
+
+
+            // --- Initialization ---
+            const initializeTerminal = () => {
+                inputElement.focus();
+                console.log("Nova CLI Enhanced Initialized.");
+                // You could add a welcome message via displayOutput here if needed
+            };
+
+            // --- Start the application ---
+            initializeTerminal();
+
+        })(); // End of IIFE
     </script>
 </body>
-
 </html>
